@@ -1,0 +1,14 @@
+{
+  "resourceName": "storagetest",
+  "policyUUID": "1a48ad6b",
+  "bucketName": "vuejsamplifystorage91714d845a134df9bee7912962e3",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}

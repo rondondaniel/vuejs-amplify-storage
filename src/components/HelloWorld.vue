@@ -1,58 +1,91 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+  <v-container>
+    <v-row class="justify-center pa-12">
+      <v-col
+          cols="12"
+          sm="6"
+          md="3"
+      >
+        <v-text-field
+          v-model="projectName"
+          label="Project Name"
+          outlined
+        ></v-text-field>   
+      </v-col>
+      <v-col
+        cols="32"
+        sm="16"
+        md="8"
+      >
+        <v-file-input
+          v-model="files"
+          small-chips
+          show-size
+          multiple
+          counter
+          label="Drop Files Here"
+        ></v-file-input>
+      </v-col>
+    </v-row>
+    <v-row class="justify-end">
+      <v-btn
+        color="primary"
+        rounded
+        @click="uploadFiles"
+      >
+        Upload Files
+      </v-btn>
+    
+      <v-btn
+        color="primary"
+        rounded
+        @click="readFileNames"
+      >
+        File Names
+      </v-btn>
+    </v-row>
+  
+  </v-container>
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-</script>
+  import { Storage } from 'aws-amplify'
+  export default {
+    name: 'HelloWorld',
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+    data: () => ({
+      files: [],
+      projectName: null,
+      filesNames: [],
+    }),
+    methods: {
+      readFileNames () {
+        for (let i = 0; i < this.files.length; i++) {          
+          this.filesNames[i] = this.files[i].name
+          console.log(this.files[i].type)
+        }
+        console.log(this.filesNames)
+      },
+      uploadFiles: async function () {
+        for (let i = 0; i < this.files.length; i++) {          
+          const upload = await Storage.put(this.filesNames[i], this.files[i], {
+            level: "private",
+            contentType: this.files[i].type,
+               resumable: true,
+               completeCallback: (event) => {
+                   console.log(`${this.filesNames[i]} Successfully uploaded ${event.key}`);
+               },
+               progressCallback: (progress) => {
+                   console.log(`${this.filesNames[i]} Uploaded: ${progress.loaded}/${progress.total}`);
+               },
+               errorCallback: (err) => {
+                   console.error(`${this.filesNames[i]}: Unexpected error while uploading`, err);
+               }
+          });
+          console.log(upload)
+        }
+        
+      }
+    }
+  }
+</script>
