@@ -165,8 +165,18 @@
               this.progressInfo.splice(i, 1, { 
                 id: i,
                 name: this.files[i].name,
-                percentage: Math.ceil(progress.loaded / progress.total * 100) 
-              }),
+                percentage: Math.ceil(progress.loaded / progress.total * 100)
+              });
+
+              if (this.fileState[i].pause === 1) {
+                console.log("Pause file:", this.files[i].name);
+                upload.pause();
+
+              } else if (this.fileState[i].cancel === 1) {
+                console.log("cancel file:", this.files[i].name);
+                Storage.cancel(upload);                
+              }
+              
               console.log(`${this.files[i].name} Uploaded: ${progress.loaded}/${progress.total}`);
             },
             errorCallback: (err) => {
@@ -176,13 +186,7 @@
           console.log(upload);
           console.log(this.fileState);
           // Check user interaction
-          if (this.fileState[i].pause == 1) {
-            upload.pause;
-            console.log("Pause file:", this.files[i].name);
-          } else if (this.fileState[i].cancel == 1) {
-            Storage.cancel(upload);
-            console.log("Pause file:", this.files[i].name);
-          }
+
         }
       },
       pause (index) {
