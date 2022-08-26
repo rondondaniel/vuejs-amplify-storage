@@ -41,7 +41,7 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld/>
+      <UploadFile/>
     </v-main>
     
      </amplify-authenticator>
@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import UploadFile from './components/UploadFile';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    UploadFile,
   },
 
   data: () => ({
