@@ -41,7 +41,7 @@
     </v-app-bar>
 
     <v-main>
-      <UploadFile/>
+      <UploadFiles />
     </v-main>
     
      </amplify-authenticator>
@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import UploadFile from './components/UploadFile';
+import UploadFiles from './components/UploadFiles';
 
 export default {
   name: 'App',
 
   components: {
-    UploadFile,
+    UploadFiles,
   },
 
   data: () => ({
