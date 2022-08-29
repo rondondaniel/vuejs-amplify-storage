@@ -189,9 +189,8 @@
           let _value =  { id: i, name: _files[i].name, percentage: 0, state:  this.fileState.READY}
           this.progressInfo.push(_value)
         }
-        console.log(this.progressInfo);
       },
-      uploadFiles: async function () {
+      async uploadFiles () {
         for (let i = 0; i < this.files.length; i++) {
           this.upload[i] = await Storage.put(this.projectName + "/" + this.files[i].name, this.files[i], {
             level: "private",
@@ -207,8 +206,7 @@
                 i,
                 this.fileState.UPLOADING,
                 Math.ceil(progress.loaded / progress.total * 100)
-              );
-              
+              );              
               console.log(`${this.files[i].name} Uploaded: ${progress.loaded}/${progress.total}`);
             },
             errorCallback: (err) => {
@@ -247,7 +245,6 @@
           percentage: progress,
           state: newState
         })
-        console.log(newState,' file:', bufferFile.name);
       },
       async listFiles () {
         this.listOfFiles = [];
@@ -287,7 +284,14 @@
         }
       },
       async removeFile(fileName) {
-        await Storage.remove(fileName, { level: 'private' });
+        try {
+          await Storage.remove(fileName, { level: 'private' })
+            .catch(err => console.log(err));
+        }
+        catch (err) {
+          console.log('Oops something wrong with removing file: ', err);
+        }
+        this.listFiles();
       },
     }
   }
